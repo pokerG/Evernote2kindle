@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId">
+	<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:title>这是一本测试书籍</dc:title>
+        <dc:date>2015-01-15</dc:date>
+        <dc:identifier id="BookId">hr_2015-01-15</dc:identifier>
+        <dc:language>zh-CN</dc:language>
+        <dc:rights></dc:rights>
+        <dc:creator>kzzhr</dc:creator>
+        <dc:publisher>zhr_publisher</dc:publisher>
+        <dc:subject>ZeroTag</dc:subject>
+        <dc:description>这是kzzhr做的第一本epub，反复调试，着实不易</dc:description>
+        <meta name="cover" content="cover" />
+    </metadata>
+    <manifest>
+		<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+        <item id="toc_xhtml" href='toc.xhtml' media-type="application/xhtml+xml" />
+        <item id="cover_xhtml" href="cover.xhtml" media-type="application/xhtml+xml" />
+		<item id="cover" href="cover.jpg" media-type="image/jpeg" />
+    </manifest>
+    <spine toc="ncx">
+    	<itemref idref="cover_xhtml" linear="no" />
+        <itemref idref="toc_xhtml" />
+    </spine>
+    <guide>
+      <reference type="toc" title="UNTITLED" href="toc.xhtml" />
+      <reference type="cover" title="cover" href="cover.jpg" />
+    </guide>
+</package>

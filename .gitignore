@@ -1,0 +1,9 @@
+*.epub
+*.mobi
+*.pyc
+*.storage
+my_test_book/*
+articles/*
+evernote/*
+config.json
+client_secret.json

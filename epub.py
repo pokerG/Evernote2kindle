@@ -23,34 +23,34 @@ ET._serialize_xml = ET._serialize['xml'] = _serialize_xml
 
 class article():
 
-	def __init__(sf,title,ctx):
-		sf.title = title
-		sf.ctx = ctx
+	def __init__(self,title,ctx):
+		self.title = title
+		self.ctx = ctx
 
 class EpubBook():
 
 	# 初始化的时候会建立文件夹，以便添加img
-	def __init__(sf,name):
-		sf.name = name	# 书名
-		sf.date = str(time.asctime())
-		sf.identifier = 'urn:uuid:'+mysha1(sf.date)
-		sf.lang = 'zh-CN'
-		sf.creator = 'kzzhr'
-		sf.publisher = 'kzzhr'
-		sf.subject = 'ZeroTag'
-		sf.description = 'This is a new book'
-		sf.book = []
-		sf.imgs = []
+	def __init__(self,name):
+		self.name = name	# 书名
+		self.date = str(time.asctime())
+		self.identifier = 'urn:uuid:'+mysha1(self.date)
+		self.lang = 'zh-CN'
+		self.creator = 'kzzhr'
+		self.publisher = 'kzzhr'
+		self.subject = 'ZeroTag'
+		self.description = 'This is a new book'
+		self.book = []
+		self.imgs = []
 
-		os.system('rm -rf %s' % sf.name)
-		os.mkdir(sf.name)
+		os.system('rm -rf %s' % self.name)
+		os.mkdir(self.name)
 
 		pass
 
 	# 生成一个 Epub 文件夹
-	def Save(sf):
+	def Save(self):
 
-		os.chdir(sf.name)
+		os.chdir(self.name)
 		print os.getcwd()
 
 		# 复制 templates 文件
@@ -71,29 +71,29 @@ class EpubBook():
 		dom = ET.parse('content.opf')
 		root = dom.getroot()
 		m = root[0]
-		m.getchildren()[0].text = sf.name
-		m.getchildren()[1].text = sf.date
-		m.getchildren()[2].text = sf.identifier
-		m.getchildren()[3].text = sf.lang
-		m.getchildren()[5].text = sf.creator
-		m.getchildren()[6].text = sf.publisher
-		m.getchildren()[7].text = sf.subject
-		m.getchildren()[8].text = sf.description
+		m.getchildren()[0].text = self.name
+		m.getchildren()[1].text = self.date
+		m.getchildren()[2].text = self.identifier
+		m.getchildren()[3].text = self.lang
+		m.getchildren()[5].text = self.creator
+		m.getchildren()[6].text = self.publisher
+		m.getchildren()[7].text = self.subject
+		m.getchildren()[8].text = self.description
 
 		# 文章清单 manifest
 		m = root[1]
-		for i in range(1,len(sf.book)+1):
+		for i in range(1,len(self.book)+1):
 			e = ET.Element('item', {'href':'ch%d.xhtml'%i,'id':'ch%d_xhtml'%i,'media-type':'application/xhtml+xml'})
 			m.append(e)
 		# 添加图片
-		# for i in range(0, len(sf.imgs)):
-		# 	tp = imgType(sf.imgs[0])
-		# 	e = ET.Element('item', {'id':'img%d'%i,'href':sf.imgs[i],'media-type':'image/%s'%tp})
+		# for i in range(0, len(self.imgs)):
+		# 	tp = imgType(self.imgs[0])
+		# 	e = ET.Element('item', {'id':'img%d'%i,'href':self.imgs[i],'media-type':'image/%s'%tp})
 		# 	m.append(e)
 
 		# spine
 		sp = root[2]
-		for i in range(1, len(sf.book) +1 ):
+		for i in range(1, len(self.book) +1 ):
 			e = ET.Element('itemref',{'idref':'ch%d_xhtml'%i})
 			sp.append(e)
 
@@ -104,13 +104,13 @@ class EpubBook():
 		dom = ET.parse('toc.ncx')
 		root = dom.getroot()
 		head = root[0]
-		head[0].set('content',sf.identifier)
+		head[0].set('content',self.identifier)
 		nav = root[2]
-		for i in range(1,len(sf.book)+1):
+		for i in range(1,len(self.book)+1):
 			np = ET.Element('navPoint',{'id':'navPoint-%d'%i})
 			nl = ET.Element('navLabel')
 			nt = ET.Element('text')
-			nt.text = sf.book[i-1].title
+			nt.text = self.book[i-1].title
 			nl.append(nt)
 			nc = ET.Element('content',{'src':'ch%d.xhtml'%i})
 			np.append(nl)
@@ -124,10 +124,10 @@ class EpubBook():
 		dom = ET.parse('toc.xhtml')
 		root = dom.getroot()
 		body = root[1]
-		for i in range(1, len(sf.book)+1 ):
+		for i in range(1, len(self.book)+1 ):
 			li = ET.Element('li')
 			a = ET.Element('a',{'href':'ch%d.xhtml'%i})
-			a.text = sf.book[i-1].title
+			a.text = self.book[i-1].title
 			li.append(a)
 			body.append(li)
 
@@ -135,48 +135,48 @@ class EpubBook():
 		
 		# chX.xhtml
 		# -------------
-		for i in range(1, len(sf.book)+1 ):
+		for i in range(1, len(self.book)+1 ):
 			dom = ET.parse('ch0.xhtml')
 			root = dom.getroot()
 			body = root[1]
-			body[0].text = sf.book[i-1].title
+			body[0].text = self.book[i-1].title
 			div = ET.Element('div')
-			div.append(CDATA(sf.book[i-1].ctx))
+			div.append(CDATA(self.book[i-1].ctx))
 			body.append(div)
 			dom.write('ch%d.xhtml'%i, 'utf-8')
 
 		print '[Done]'
 		os.chdir('../')
 
-	def Pack2Epub(sf):
-		filename = sf.name+'.epub'
+	def Pack2Epub(self):
+		filename = self.name+'.epub'
 		os.system('rm -rf '+filename)
-		os.chdir(sf.name)
+		os.chdir(self.name)
 		os.system('zip -r '+ filename+' *')
 		os.system('mv '+ filename+' ../'+filename)
 		os.chdir('../')
-		# os.system('rm -rf '+sf.name)
+		# os.system('rm -rf '+self.name)
 
-	def Save2Epub(sf):
-		sf.Save()
-		sf.Pack2Epub()
+	def Save2Epub(self):
+		self.Save()
+		self.Pack2Epub()
 
-	def E2Mobi(sf):
-		os.system('kindlegen %s.epub' % sf.name)
+	def E2Mobi(self):
+		os.system('kindlegen %s.epub' % self.name)
 
 	# 使用 Calibre 的 ebook-convert 命令
-	def Calibre_Convert(sf, name):
+	def Calibre_Convert(self, name):
 		print '将调用 Calibre 的 ebook-convert 转换，请确保已安装 Calibre 并配置好 $PATH'
-		os.system('ebook-convert %s.epub %s' % ( sf.name, name ))
+		os.system('ebook-convert %s.epub %s' % ( self.name, name ))
 
 	# 把 /a/b/c.jpg 保存到 bookname/c.jpg
 	# 绝对路径
-	def newImg(sf, path):
+	def newImg(self, path):
 		s = path
 		if s.rfind('/') != -1:
 			s = s[s.rfind('/')+1:]
-		os.system('cp %s %s' % ( path, os.path.join(sf.name, s) ) )
-		# sf.imgs.append(s)
+		os.system('cp %s %s' % ( path, os.path.join(self.name, s) ) )
+		# self.imgs.append(s)
 
 def imgType(s):
 	return s[s.find('.')+1:]
